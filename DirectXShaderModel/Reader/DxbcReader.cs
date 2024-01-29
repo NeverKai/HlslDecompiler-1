@@ -123,9 +123,8 @@ namespace HlslDecompiler.DirectXShaderModel
                     }
                 }
             }
-
-            return new ShaderModel(majorVersion.Value, minorVersion.Value, shaderType.Value, inputSignatures, outputSignatures, constantBufferDescriptions, instructions);
-        }
+            return new ShaderModel(majorVersion == null ? 4 : majorVersion.Value, minorVersion != null ? minorVersion.Value : 0, outputSignatures.Count == 1 ? ShaderType .Pixel: ShaderType.Vertex, inputSignatures, outputSignatures, constantBufferDescriptions, instructions);
+    }
 
         private D3D10Instruction ReadInstruction()
         {

@@ -402,14 +402,19 @@ namespace HlslDecompiler.Hlsl
                     {
                         var registerKey = new D3D10RegisterKey(OperandType.ConstantBuffer, registerNumber);
                         if (!_registerDeclarations.TryGetValue(registerKey, out _))
+                        {
+                            var registerDeclaration = CreateRegisterDeclarationFromD3D10RegistryKey(registerKey);
+                            _registerDeclarations.Add(registerKey, registerDeclaration);
+                        }
+                    }
+                }
                 else if (instruction.Opcode == D3D10Opcode.DclSampler)
                 {
                     int count = (int)instruction.GetParamInt(0);
-
                     for (int registerNumber = 0; registerNumber < count; registerNumber++)
                     {
                         var registerKey = new D3D10RegisterKey(OperandType.Sampler, registerNumber);
-                        if (!_registerDeclarations.TryGetValue($"{registerKey}{instruction.GetDestinationWriteMask()}", out _))
+                        if (!_registerDeclarations.TryGetValue(registerKey, out _))
                         {
                             var registerDeclaration = CreateRegisterDeclarationFromD3D10RegistryKey(registerKey);
                             _registerDeclarations.Add(registerKey, registerDeclaration);

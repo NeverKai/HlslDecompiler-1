@@ -402,6 +402,14 @@ namespace HlslDecompiler.Hlsl
                     {
                         var registerKey = new D3D10RegisterKey(OperandType.ConstantBuffer, registerNumber);
                         if (!_registerDeclarations.TryGetValue(registerKey, out _))
+                else if (instruction.Opcode == D3D10Opcode.DclSampler)
+                {
+                    int count = (int)instruction.GetParamInt(0);
+
+                    for (int registerNumber = 0; registerNumber < count; registerNumber++)
+                    {
+                        var registerKey = new D3D10RegisterKey(OperandType.Sampler, registerNumber);
+                        if (!_registerDeclarations.TryGetValue($"{registerKey}{instruction.GetDestinationWriteMask()}", out _))
                         {
                             var registerDeclaration = CreateRegisterDeclarationFromD3D10RegistryKey(registerKey);
                             _registerDeclarations.Add(registerKey, registerDeclaration);
@@ -429,7 +437,9 @@ namespace HlslDecompiler.Hlsl
                     }
                 }
                 else if (instruction.Opcode == D3D10Opcode.DclInputPS ||
-                    instruction.Opcode == D3D10Opcode.DclInputPSSiv)
+                    instruction.Opcode == D3D10Opcode.DclInputPSSiv ||
+                    instruction.Opcode == D3D10Opcode.DclInput ||
+                    instruction.Opcode == D3D10Opcode.DclInputSiv)
                 {
                     var registerDeclaration = CreateRegisterDeclarationFromD3D10Dcl(instruction, shader);
                     D3D10RegisterKey registerKey = (D3D10RegisterKey)registerDeclaration.RegisterKey;
